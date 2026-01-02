@@ -131,7 +131,7 @@ export default function AdminPage() {
       const activities: RecentActivity[] = [];
 
       if (recentSubs) {
-        recentSubs.forEach((sub: { id: string; created_at: string; profiles?: { full_name?: string } | null }) => {
+        recentSubs.forEach((sub: { id: string; created_at: string; profiles?: { full_name?: string } | null }): void => {
           activities.push({
             id: sub.id,
             type: 'subscription',

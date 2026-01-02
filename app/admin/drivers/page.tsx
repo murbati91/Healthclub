@@ -38,6 +38,7 @@ interface Driver {
   area?: string;
   totalDeliveries?: number;
   todayDeliveries?: number;
+  [key: string]: unknown;
 }
 
 const BAHRAIN_AREAS = [

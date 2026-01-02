@@ -27,6 +27,7 @@ interface Customer {
     package_type: string;
     status: string;
   };
+  [key: string]: unknown;
 }
 
 export default function CustomersPage() {

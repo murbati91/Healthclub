@@ -45,6 +45,7 @@ interface Order {
     package_type: string;
     meals_per_day: number;
   };
+  [key: string]: unknown;
 }
 
 export default function OrdersPage() {

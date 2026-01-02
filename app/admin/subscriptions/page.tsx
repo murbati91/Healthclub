@@ -42,6 +42,7 @@ interface Subscription {
   total_price: number;
   status: SubscriptionStatus;
   created_at: string;
+  [key: string]: unknown;
 }
 
 export default function SubscriptionsPage() {
