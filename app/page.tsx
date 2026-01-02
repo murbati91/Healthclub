@@ -8,6 +8,7 @@ import { Phone, MapPin, Clock, ChevronLeft, ChevronRight, Salad, Leaf, Cookie, F
 import { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useLanguage } from "@/lib/language-context";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -108,9 +109,13 @@ const diets = [
 
 export default function Home() {
   const router = useRouter();
+  const { dir } = useLanguage();
 
-  // Hero carousel
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 4000 })]);
+  // Hero carousel with RTL support
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, direction: dir === 'rtl' ? 'rtl' : 'ltr' },
+    [Autoplay({ delay: 4000 })]
+  );
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
