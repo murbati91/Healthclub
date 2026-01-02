@@ -3,6 +3,28 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
+ * Get the correct origin from the request, handling proxy scenarios
+ */
+function getOrigin(request: NextRequest): string {
+  // Check for forwarded headers first (set by Nginx)
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https';
+
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  // Fallback to host header
+  const host = request.headers.get('host');
+  if (host && !host.includes('localhost')) {
+    return `https://${host}`;
+  }
+
+  // Production fallback
+  return 'https://healthyclub.bahrain-ai.com';
+}
+
+/**
  * Auth callback route handler
  * Handles OAuth callbacks and email confirmations
  */
@@ -10,6 +32,9 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   const next = requestUrl.searchParams.get('next') || '/dashboard';
+
+  // Get the correct origin for redirects
+  const origin = getOrigin(request);
 
   if (code) {
     const supabase = await createServerSupabaseClient();
@@ -19,9 +44,9 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error exchanging code for session:', error);
-      // Redirect to login with error
+      // Redirect to login with error - use correct origin
       return NextResponse.redirect(
-        new URL(`/login?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+        new URL(`/login?error=${encodeURIComponent(error.message)}`, origin)
       );
     }
 
@@ -62,21 +87,21 @@ export async function GET(request: NextRequest) {
         }
 
         // New user - redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', requestUrl.origin));
+        return NextResponse.redirect(new URL('/dashboard', origin));
       }
 
       // Redirect based on role if no 'next' param specified
       if (next === '/dashboard' && profile) {
         const role = profile.role;
         if (role === 'admin') {
-          return NextResponse.redirect(new URL('/admin', requestUrl.origin));
+          return NextResponse.redirect(new URL('/admin', origin));
         } else if (role === 'driver') {
-          return NextResponse.redirect(new URL('/driver', requestUrl.origin));
+          return NextResponse.redirect(new URL('/driver', origin));
         }
       }
     }
   }
 
   // Redirect to the specified next page or dashboard
-  return NextResponse.redirect(new URL(next, requestUrl.origin));
+  return NextResponse.redirect(new URL(next, origin));
 }

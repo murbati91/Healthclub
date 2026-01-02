@@ -7,19 +7,6 @@ import { Database } from './supabase';
 
 type DeliveryAddress = Database['public']['Tables']['subscriptions']['Row']['delivery_address'];
 
-interface OrderWithCustomer {
-  id: string;
-  delivery_address: string;
-  subscription_id: string;
-  delivery_date: string;
-  delivery_time_slot: string | null;
-  status: string;
-  meal_details: any;
-  customer_name?: string;
-  customer_phone?: string;
-  package_type?: string;
-}
-
 /**
  * Generate Google Maps navigation URL from delivery address
  * Opens directly in Google Maps app on mobile
@@ -143,10 +130,11 @@ export function formatStatus(status: string): string {
 /**
  * Get meal details summary from JSONB
  */
-export function getMealSummary(mealDetails: any): string {
-  if (!mealDetails) return 'Meal details not available';
+export function getMealSummary(mealDetails: unknown): string {
+  if (!mealDetails || typeof mealDetails !== 'object') return 'Meal details not available';
 
-  const mealsPerDay = mealDetails.meals_per_day || 1;
+  const details = mealDetails as { meals_per_day?: number };
+  const mealsPerDay = details.meals_per_day || 1;
   const mealText = mealsPerDay === 1 ? 'meal' : 'meals';
 
   return `${mealsPerDay} ${mealText}`;

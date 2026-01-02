@@ -101,7 +101,7 @@ export interface Order {
   driver_id?: string | null;
   delivery_date: string;
   delivery_time_slot?: string | null;
-  meal_details: Record<string, any>;
+  meal_details: Record<string, unknown>;
   status: OrderStatus;
   delivery_address: string;
   driver_notified_at?: string | null;

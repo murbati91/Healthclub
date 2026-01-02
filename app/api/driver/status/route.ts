@@ -5,7 +5,7 @@ import { createServerSupabaseClient } from '@/lib/supabase';
  * GET /api/driver/status
  * Get driver's current status (active/inactive) and location
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient();
 
@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest) {
     const { active, location } = body;
 
     // Build update object
-    const updateData: any = {
+    const updateData: Record<string, string | number | boolean> = {
       updated_at: new Date().toISOString(),
     };
 

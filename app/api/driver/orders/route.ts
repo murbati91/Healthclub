@@ -69,7 +69,25 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to flatten the structure
-    const formattedOrders = (orders || []).map((order: any) => ({
+    interface RawOrder {
+      id: string;
+      delivery_date: string;
+      delivery_time_slot: string;
+      delivery_address: string;
+      status: string;
+      meal_details: unknown;
+      notes: string | null;
+      subscription_id: string;
+      subscriptions?: {
+        profiles?: {
+          full_name?: string;
+          phone?: string;
+        } | null;
+        package_type?: string;
+      } | null;
+    }
+
+    const formattedOrders = (orders || []).map((order: RawOrder) => ({
       id: order.id,
       delivery_date: order.delivery_date,
       delivery_time_slot: order.delivery_time_slot,
@@ -85,9 +103,9 @@ export async function GET(request: NextRequest) {
 
     // Group orders by status
     const grouped = {
-      pending: formattedOrders.filter((o: any) => o.status === 'scheduled' || o.status === 'preparing'),
-      in_progress: formattedOrders.filter((o: any) => o.status === 'out_for_delivery'),
-      completed: formattedOrders.filter((o: any) => o.status === 'delivered'),
+      pending: formattedOrders.filter((o) => o.status === 'scheduled' || o.status === 'preparing'),
+      in_progress: formattedOrders.filter((o) => o.status === 'out_for_delivery'),
+      completed: formattedOrders.filter((o) => o.status === 'delivered'),
       all: formattedOrders,
     };
 
@@ -167,7 +185,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update the order status
-    const updateData: any = {
+    const updateData: Record<string, string> = {
       status,
       updated_at: new Date().toISOString(),
     };

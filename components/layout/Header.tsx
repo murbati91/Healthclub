@@ -4,6 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { useLanguage } from "@/lib/language-context";
+import { useTranslation } from "@/lib/translations";
 import {
   Sheet,
   SheetContent,
@@ -16,12 +19,16 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Header() {
+  const { language } = useLanguage();
+  const t = useTranslation(language);
+
   const navItems = [
-    { name: "Home", href: "/" },
-    { name: "Menu", href: "#features" },
-    { name: "Packages", href: "#packages" },
+    { name: t("Home"), href: "/" },
+    { name: t("Menu"), href: "#features" },
+    { name: t("Packages"), href: "#packages" },
   ];
 
   return (
@@ -44,11 +51,11 @@ export function Header() {
           </div>
           <div className="flex flex-col">
             <span className="text-xl md:text-2xl font-bold leading-tight">
-              <span className="text-green-700">Healthy</span>{" "}
-              <span className="text-blue-500">Club</span>
+              <span className="text-green-700">{language === "ar" ? "نادي" : "Healthy"}</span>{" "}
+              <span className="text-blue-500">{language === "ar" ? "الصحة" : "Club"}</span>
             </span>
             <span className="hidden md:block text-[10px] text-muted-foreground font-medium tracking-wide">
-              Eat Healthy to Be Strong
+              {t("Eat Healthy to Be Strong")}
             </span>
           </div>
         </Link>
@@ -70,17 +77,21 @@ export function Header() {
           </NavigationMenu>
 
           <div className="flex items-center gap-3">
+            <LanguageToggle />
+            <ThemeToggle />
             <Button asChild variant="ghost">
-              <Link href="/login">Login</Link>
+              <Link href="/login">{t("Login")}</Link>
             </Button>
             <Button asChild>
-              <Link href="/register">Register</Link>
+              <Link href="/register">{t("Register")}</Link>
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -88,7 +99,7 @@ export function Header() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side={language === "ar" ? "left" : "right"}>
               <nav className="flex flex-col gap-4 mt-8">
                 {navItems.map((item) => (
                   <Link
@@ -101,10 +112,10 @@ export function Header() {
                 ))}
                 <div className="flex flex-col gap-3 mt-6">
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/login">Login</Link>
+                    <Link href="/login">{t("Login")}</Link>
                   </Button>
                   <Button asChild className="w-full">
-                    <Link href="/register">Register</Link>
+                    <Link href="/register">{t("Register")}</Link>
                   </Button>
                 </div>
               </nav>

@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, MapPin, MessageCircle } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
+import { useTranslation } from "@/lib/translations";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -9,6 +13,8 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 );
 
 export function Footer() {
+  const { language } = useLanguage();
+  const t = useTranslation(language);
   return (
     <footer className="bg-green-50 border-t">
       <div className="container py-12">
@@ -25,39 +31,39 @@ export function Footer() {
               />
               <div>
                 <h3 className="text-xl font-bold">
-                  <span className="text-green-700">Healthy</span>{" "}
-                  <span className="text-blue-500">Club</span>
+                  <span className="text-green-700">{language === "ar" ? "نادي" : "Healthy"}</span>{" "}
+                  <span className="text-blue-500">{language === "ar" ? "الصحة" : "Club"}</span>
                 </h3>
-                <p className="text-xs text-muted-foreground">Restaurant</p>
+                <p className="text-xs text-muted-foreground">{t("Restaurant")}</p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Eat Healthy to be Strong. Fresh, nutritious meals delivered to your door.
+              {t("Eat Healthy to be Strong. Fresh, nutritious meals delivered to your door.")}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Quick Links</h4>
+            <h4 className="font-semibold">{t("Quick Links")}</h4>
             <nav className="flex flex-col space-y-2">
               <Link href="/" className="text-sm text-muted-foreground hover:text-green-700 transition-colors">
-                Home
+                {t("Home")}
               </Link>
               <Link href="#features" className="text-sm text-muted-foreground hover:text-green-700 transition-colors">
-                Menu
+                {t("Menu")}
               </Link>
               <Link href="#packages" className="text-sm text-muted-foreground hover:text-green-700 transition-colors">
-                Packages
+                {t("Packages")}
               </Link>
               <Link href="/subscribe" className="text-sm text-muted-foreground hover:text-green-700 transition-colors">
-                Subscribe
+                {t("Subscribe")}
               </Link>
             </nav>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Contact Us</h4>
+            <h4 className="font-semibold">{t("Contact Us")}</h4>
             <div className="flex flex-col space-y-3">
               <a href="tel:+97333775587" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-green-700 transition-colors">
                 <Phone className="h-4 w-4 text-green-700" />
@@ -65,18 +71,18 @@ export function Footer() {
               </a>
               <a href="https://wa.me/97333775587" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-green-600 transition-colors">
                 <MessageCircle className="h-4 w-4 text-green-600" />
-                <span>WhatsApp Us</span>
+                <span>{t("WhatsApp Us")}</span>
               </a>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 text-green-700" />
-                <span>Bahrain</span>
+                <span>{t("Bahrain")}</span>
               </div>
             </div>
           </div>
 
           {/* Social Media */}
           <div className="space-y-4">
-            <h4 className="font-semibold">Follow Us</h4>
+            <h4 className="font-semibold">{t("Follow Us")}</h4>
             <div className="flex gap-4">
               <a
                 href="https://instagram.com/healthy_club_bh"
@@ -94,7 +100,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Healthy Club Restaurant. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {language === "ar" ? "نادي الصحة" : "Healthy Club"} {t("Restaurant")}. {t("All rights reserved")}.</p>
         </div>
       </div>
     </footer>

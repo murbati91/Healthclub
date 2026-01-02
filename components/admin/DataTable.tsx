@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronLeft, ChevronRight, MoreVertical, Search } from 'lucide-react';
+import { useLanguage } from '@/lib/language-context';
+import { useTranslation } from '@/lib/translations';
 
 export interface Column<T> {
   key: string;
@@ -43,7 +45,7 @@ interface DataTableProps<T> {
   emptyMessage?: string;
 }
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
   data,
   columns,
   actions,
@@ -53,6 +55,8 @@ export function DataTable<T extends Record<string, any>>({
   itemsPerPage = 10,
   emptyMessage = 'No data available',
 }: DataTableProps<T>) {
+  const { language } = useLanguage();
+  const t = useTranslation(language);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -70,8 +74,8 @@ export function DataTable<T extends Record<string, any>>({
   // Sort data
   const sortedData = sortColumn
     ? [...filteredData].sort((a, b) => {
-        const aVal = a[sortColumn];
-        const bVal = b[sortColumn];
+        const aVal = a[sortColumn] as string | number;
+        const bVal = b[sortColumn] as string | number;
         const modifier = sortDirection === 'asc' ? 1 : -1;
 
         if (aVal < bVal) return -1 * modifier;
@@ -120,7 +124,7 @@ export function DataTable<T extends Record<string, any>>({
       )}
 
       {/* Table */}
-      <div className="border rounded-lg">
+      <div className="border dark:border-border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
@@ -151,7 +155,7 @@ export function DataTable<T extends Record<string, any>>({
                 <TableRow key={index}>
                   {columns.map((column) => (
                     <TableCell key={column.key}>
-                      {column.render ? column.render(item) : item[column.key]}
+                      {column.render ? column.render(item) : (item[column.key] as React.ReactNode)}
                     </TableCell>
                   ))}
                   {actions && actions.length > 0 && (
@@ -200,9 +204,9 @@ export function DataTable<T extends Record<string, any>>({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to{' '}
-            {Math.min(startIndex + itemsPerPage, sortedData.length)} of{' '}
-            {sortedData.length} results
+            {t('Showing')} {startIndex + 1} {t('to')}{' '}
+            {Math.min(startIndex + itemsPerPage, sortedData.length)} {t('of')}{' '}
+            {sortedData.length} {t('results')}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -212,10 +216,10 @@ export function DataTable<T extends Record<string, any>>({
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              {t('Previous')}
             </Button>
             <div className="text-sm">
-              Page {currentPage} of {totalPages}
+              {t('Page')} {currentPage} {t('of')} {totalPages}
             </div>
             <Button
               variant="outline"
@@ -223,7 +227,7 @@ export function DataTable<T extends Record<string, any>>({
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
-              Next
+              {t('Next')}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

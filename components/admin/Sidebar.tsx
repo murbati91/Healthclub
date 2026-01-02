@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
+import { useLanguage } from '@/lib/language-context';
+import { useTranslation } from '@/lib/translations';
 import {
   LayoutDashboard,
   Users,
@@ -23,20 +25,22 @@ interface SidebarProps {
   currentPath: string;
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Customers', href: '/admin/customers', icon: Users },
-  { name: 'Subscriptions', href: '/admin/subscriptions', icon: Package },
-  { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { name: 'Drivers', href: '/admin/drivers', icon: Truck },
-  { name: 'Packages', href: '/admin/packages', icon: Box },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
-];
-
 export function Sidebar({ currentPath }: SidebarProps) {
+  const { language } = useLanguage();
+  const t = useTranslation(language);
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  const navigation = [
+    { name: t('Dashboard'), href: '/admin', icon: LayoutDashboard },
+    { name: t('Users'), href: '/admin/customers', icon: Users },
+    { name: t('Subscriptions'), href: '/admin/subscriptions', icon: Package },
+    { name: t('Orders'), href: '/admin/orders', icon: ShoppingCart },
+    { name: t('Drivers'), href: '/admin/drivers', icon: Truck },
+    { name: t('Packages'), href: '/admin/packages', icon: Box },
+    { name: t('Settings'), href: '/admin/settings', icon: Settings },
+  ];
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -46,16 +50,16 @@ export function Sidebar({ currentPath }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'bg-card border-r border-border transition-all duration-300 flex flex-col',
+        'bg-card dark:bg-card border-r border-border dark:border-border transition-all duration-300 flex flex-col',
         collapsed ? 'w-20' : 'w-64'
       )}
     >
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="p-4 border-b border-border dark:border-border flex items-center justify-between">
         {!collapsed && (
           <div>
-            <h2 className="text-lg font-bold text-primary">Healthy Club</h2>
-            <p className="text-xs text-muted-foreground">Admin Panel</p>
+            <h2 className="text-lg font-bold text-primary dark:text-primary">{t('Healthy Club')}</h2>
+            <p className="text-xs text-muted-foreground">{t('Admin Panel')}</p>
           </div>
         )}
         <Button
@@ -97,18 +101,18 @@ export function Sidebar({ currentPath }: SidebarProps) {
       </nav>
 
       {/* Sign Out */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border dark:border-border">
         <Button
           variant="ghost"
           className={cn(
-            'w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10',
+            'w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20',
             collapsed && 'justify-center px-2'
           )}
           onClick={handleSignOut}
-          title={collapsed ? 'Sign Out' : undefined}
+          title={collapsed ? t('Sign Out') : undefined}
         >
           <LogOut className={cn('h-5 w-5', !collapsed && 'mr-3')} />
-          {!collapsed && <span>Sign Out</span>}
+          {!collapsed && <span>{t('Sign Out')}</span>}
         </Button>
       </div>
     </aside>

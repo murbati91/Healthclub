@@ -34,7 +34,7 @@ interface DeliveryCardProps {
     delivery_address: string;
     delivery_time_slot: string | null;
     status: string;
-    meal_details: any;
+    meal_details: unknown;
     customer_name?: string;
     customer_phone?: string;
     package_type?: string;

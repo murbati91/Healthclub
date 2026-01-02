@@ -28,7 +28,7 @@ import {
   validateSelectedDays,
   getDietaryRestrictionsByType,
 } from '@/lib/subscription-utils';
-import type { SubscriptionFormData, PackageType, Weekday, DeliveryAddress } from '@/types';
+import type { SubscriptionFormData, PackageType, Weekday } from '@/types';
 
 const TOTAL_STEPS = 5;
 

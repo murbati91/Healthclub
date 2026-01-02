@@ -24,6 +24,8 @@ import { createClient } from '@/lib/supabase';
 import { ShoppingCart, Filter, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/language-context';
+import { useTranslation } from '@/lib/translations';
 
 type OrderStatus = 'scheduled' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
 
@@ -52,8 +54,10 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [drivers, setDrivers] = useState<any[]>([]);
+  const [drivers, setDrivers] = useState<Array<{ id: string; full_name: string; phone: string }>>([]);
   const [selectedDriver, setSelectedDriver] = useState<string>('');
+  const { language } = useLanguage();
+  const t = useTranslation(language);
   const supabase = createClient();
 
   useEffect(() => {
@@ -215,53 +219,53 @@ export default function OrdersPage() {
   const columns: Column<Order>[] = [
     {
       key: 'delivery_date',
-      label: 'Delivery Date',
+      label: t('Delivery Date'),
       sortable: true,
       render: (order) => (
-        <span className="font-medium">
+        <span className="font-medium dark:text-white">
           {format(new Date(order.delivery_date), 'MMM d, yyyy')}
         </span>
       ),
     },
     {
       key: 'customer',
-      label: 'Customer',
+      label: t('Customer'),
       sortable: true,
       render: (order) => (
         <div>
-          <div className="font-medium">{order.customer.full_name}</div>
-          <div className="text-sm text-muted-foreground">{order.customer.phone}</div>
+          <div className="font-medium dark:text-white">{order.customer.full_name}</div>
+          <div className="text-sm text-muted-foreground dark:text-gray-400">{order.customer.phone}</div>
         </div>
       ),
     },
     {
       key: 'subscription',
-      label: 'Package',
+      label: t('Package'),
       render: (order) => (
         <div>
-          <div className="font-medium capitalize">{order.subscription.package_type}</div>
-          <div className="text-sm text-muted-foreground">
-            {order.subscription.meals_per_day} meals/day
+          <div className="font-medium capitalize dark:text-white">{order.subscription.package_type}</div>
+          <div className="text-sm text-muted-foreground dark:text-gray-400">
+            {order.subscription.meals_per_day} {t('meals/day')}
           </div>
         </div>
       ),
     },
     {
       key: 'driver',
-      label: 'Driver',
+      label: t('Driver'),
       render: (order) =>
         order.driver ? (
           <div>
-            <div className="font-medium">{order.driver.full_name}</div>
-            <div className="text-sm text-muted-foreground">{order.driver.phone}</div>
+            <div className="font-medium dark:text-white">{order.driver.full_name}</div>
+            <div className="text-sm text-muted-foreground dark:text-gray-400">{order.driver.phone}</div>
           </div>
         ) : (
-          <Badge variant="outline">Unassigned</Badge>
+          <Badge variant="outline">{t('Unassigned')}</Badge>
         ),
     },
     {
       key: 'status',
-      label: 'Status',
+      label: t('Status'),
       sortable: true,
       render: (order) => (
         <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -273,19 +277,19 @@ export default function OrdersPage() {
 
   const actions: Action<Order>[] = [
     {
-      label: 'Mark as Preparing',
+      label: t('Mark as Preparing'),
       onClick: (order) => handleStatusChange(order.id, 'preparing'),
     },
     {
-      label: 'Mark as Out for Delivery',
+      label: t('Mark as Out for Delivery'),
       onClick: (order) => handleStatusChange(order.id, 'out_for_delivery'),
     },
     {
-      label: 'Mark as Delivered',
+      label: t('Mark as Delivered'),
       onClick: (order) => handleStatusChange(order.id, 'delivered'),
     },
     {
-      label: 'Cancel Order',
+      label: t('Cancel Order'),
       onClick: (order) => handleStatusChange(order.id, 'cancelled'),
       variant: 'destructive',
     },
@@ -296,7 +300,7 @@ export default function OrdersPage() {
       <div className="p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading orders...</p>
+          <p className="text-muted-foreground dark:text-gray-400">{t('Loading orders...')}</p>
         </div>
       </div>
     );
@@ -305,42 +309,42 @@ export default function OrdersPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">Order Management</h1>
-        <p className="text-muted-foreground">
-          View and manage meal delivery orders
+        <h1 className="text-3xl font-bold text-primary mb-2 dark:text-white">{t('Order Management')}</h1>
+        <p className="text-muted-foreground dark:text-gray-400">
+          {t('View and manage meal delivery orders')}
         </p>
       </div>
 
-      <Card>
+      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 dark:text-white">
                 <ShoppingCart className="h-5 w-5" />
-                All Orders ({filteredOrders.length})
+                {t('All Orders')} ({filteredOrders.length})
               </CardTitle>
-              <CardDescription>
-                Filter, assign drivers, and update order status
+              <CardDescription className="dark:text-gray-400">
+                {t('Filter, assign drivers, and update order status')}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] dark:bg-gray-700 dark:text-white dark:border-gray-600">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                  <SelectItem value="preparing">Preparing</SelectItem>
-                  <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+                  <SelectItem value="all" className="dark:text-white">{t('All Status')}</SelectItem>
+                  <SelectItem value="scheduled" className="dark:text-white">{t('Scheduled')}</SelectItem>
+                  <SelectItem value="preparing" className="dark:text-white">{t('Preparing')}</SelectItem>
+                  <SelectItem value="out_for_delivery" className="dark:text-white">{t('Out for Delivery')}</SelectItem>
+                  <SelectItem value="delivered" className="dark:text-white">{t('Delivered')}</SelectItem>
+                  <SelectItem value="cancelled" className="dark:text-white">{t('Cancelled')}</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" onClick={handleExportCSV}>
                 <Download className="h-4 w-4 mr-2" />
-                Export CSV
+                {t('Export CSV')}
               </Button>
             </div>
           </div>
@@ -350,29 +354,29 @@ export default function OrdersPage() {
             data={filteredOrders}
             columns={columns}
             actions={actions}
-            searchPlaceholder="Search orders..."
-            emptyMessage="No orders found"
+            searchPlaceholder={t('Search orders...')}
+            emptyMessage={t('No orders found')}
           />
         </CardContent>
       </Card>
 
       {/* Bulk Assign Driver Dialog */}
       <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
-        <DialogContent>
+        <DialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle>Assign Driver to Orders</DialogTitle>
-            <DialogDescription>
-              Select a driver to assign to {selectedOrders.length} selected orders
+            <DialogTitle className="dark:text-white">{t('Assign Driver to Orders')}</DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              {t('Select a driver to assign to')} {selectedOrders.length} {t('selected orders')}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Select value={selectedDriver} onValueChange={setSelectedDriver}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a driver" />
+              <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                <SelectValue placeholder={t('Select a driver')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                 {drivers.map((driver) => (
-                  <SelectItem key={driver.id} value={driver.id}>
+                  <SelectItem key={driver.id} value={driver.id} className="dark:text-white">
                     {driver.full_name} - {driver.phone}
                   </SelectItem>
                 ))}
@@ -381,9 +385,9 @@ export default function OrdersPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
-            <Button onClick={handleBulkAssignDriver}>Assign Driver</Button>
+            <Button onClick={handleBulkAssignDriver}>{t('Assign Driver')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Phone, MapPin, Clock, ChevronLeft, ChevronRight, Salad, Leaf, Cookie, Fish, UtensilsCrossed } from "lucide-react";
@@ -408,7 +407,7 @@ export default function Home() {
               <p className="text-gray-600 leading-relaxed mb-6">
                 Eating healthy is the foundation of a strong body and mind. Our meals are
                 crafted with fresh, natural ingredients to support your wellness journey.
-                Whether you're looking to lose weight, build muscle, or simply maintain a
+                Whether you&apos;re looking to lose weight, build muscle, or simply maintain a
                 balanced lifestyle, we have the perfect meal plan for you.
               </p>
               <div className="space-y-4">

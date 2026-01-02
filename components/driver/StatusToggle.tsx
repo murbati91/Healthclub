@@ -11,7 +11,7 @@ interface StatusToggleProps {
   onStatusChange?: (isOnline: boolean) => void;
 }
 
-export function StatusToggle({ driverId, initialStatus = false, onStatusChange }: StatusToggleProps) {
+export function StatusToggle({ driverId: _driverId, initialStatus = false, onStatusChange }: StatusToggleProps) {
   const [isOnline, setIsOnline] = useState(initialStatus);
   const [isLoading, setIsLoading] = useState(false);
 

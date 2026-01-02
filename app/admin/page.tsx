@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { StatsCard } from '@/components/admin/StatsCard';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase';
+import { useLanguage } from '@/lib/language-context';
+import { useTranslation } from '@/lib/translations';
 import {
   Users,
   Package,
@@ -34,6 +36,8 @@ interface RecentActivity {
 }
 
 export default function AdminPage() {
+  const { language } = useLanguage();
+  const t = useTranslation(language);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
     totalCustomers: 0,
@@ -127,7 +131,7 @@ export default function AdminPage() {
       const activities: RecentActivity[] = [];
 
       if (recentSubs) {
-        recentSubs.forEach((sub: any) => {
+        recentSubs.forEach((sub: { id: string; created_at: string; profiles?: { full_name?: string } | null }) => {
           activities.push({
             id: sub.id,
             type: 'subscription',
@@ -149,7 +153,7 @@ export default function AdminPage() {
       <div className="p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
+          <p className="text-muted-foreground">{t('Loading dashboard...')}</p>
         </div>
       </div>
     );
@@ -158,77 +162,77 @@ export default function AdminPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold text-primary dark:text-primary mb-2">{t('Admin Dashboard')}</h1>
         <p className="text-muted-foreground">
-          Overview of Healthy Club operations
+          {t('Overview of Healthy Club operations')}
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatsCard
-          title="Total Customers"
+          title={t('Total Customers')}
           value={stats.totalCustomers}
           icon={Users}
-          iconColor="text-blue-500"
-          description="Registered customers"
+          iconColor="text-blue-500 dark:text-blue-400"
+          description={t('Registered customers')}
         />
         <StatsCard
-          title="Active Subscriptions"
+          title={t('Active Subscriptions')}
           value={stats.activeSubscriptions}
           icon={Package}
-          iconColor="text-green-500"
-          description="Currently active"
+          iconColor="text-green-500 dark:text-green-400"
+          description={t('Currently active')}
         />
         <StatsCard
-          title="Today's Orders"
+          title={t("Today's Orders")}
           value={stats.todayOrders}
           icon={ShoppingCart}
-          iconColor="text-orange-500"
-          description="Orders for today"
+          iconColor="text-orange-500 dark:text-orange-400"
+          description={t('Orders for today')}
         />
         <StatsCard
-          title="Monthly Revenue"
+          title={t('Monthly Revenue')}
           value={`BHD ${stats.monthlyRevenue.toFixed(2)}`}
           icon={DollarSign}
-          iconColor="text-purple-500"
-          description="This month"
+          iconColor="text-purple-500 dark:text-purple-400"
+          description={t('This month')}
         />
       </div>
 
       {/* Secondary Stats */}
       <div className="grid gap-6 md:grid-cols-3 mb-8">
         <StatsCard
-          title="Total Drivers"
+          title={t('Total Drivers')}
           value={stats.totalDrivers}
           icon={Truck}
-          iconColor="text-cyan-500"
-          description="Active drivers"
+          iconColor="text-cyan-500 dark:text-cyan-400"
+          description={t('Active drivers')}
         />
         <StatsCard
-          title="Pending Orders"
+          title={t('Pending Orders')}
           value={stats.pendingOrders}
           icon={Calendar}
-          iconColor="text-amber-500"
-          description="Awaiting processing"
+          iconColor="text-amber-500 dark:text-amber-400"
+          description={t('Awaiting processing')}
         />
         <StatsCard
-          title="System Status"
-          value="Operational"
+          title={t('System Status')}
+          value={t('Operational')}
           icon={Activity}
-          iconColor="text-emerald-500"
-          description="All systems running"
+          iconColor="text-emerald-500 dark:text-emerald-400"
+          description={t('All systems running')}
         />
       </div>
 
       {/* Recent Activity */}
-      <Card>
+      <Card className="dark:bg-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Recent Activity
+            {t('Recent Activity')}
           </CardTitle>
-          <CardDescription>Latest updates and events</CardDescription>
+          <CardDescription>{t('Latest updates and events')}</CardDescription>
         </CardHeader>
         <CardContent>
           {recentActivity.length > 0 ? (
@@ -236,20 +240,20 @@ export default function AdminPage() {
               {recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
+                  className="flex items-center justify-between py-3 border-b dark:border-border last:border-0"
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-2 h-2 rounded-full ${
                         activity.type === 'subscription'
-                          ? 'bg-green-500'
+                          ? 'bg-green-500 dark:bg-green-400'
                           : activity.type === 'order'
-                          ? 'bg-blue-500'
-                          : 'bg-purple-500'
+                          ? 'bg-blue-500 dark:bg-blue-400'
+                          : 'bg-purple-500 dark:bg-purple-400'
                       }`}
                     />
                     <div>
-                      <p className="text-sm font-medium">{activity.message}</p>
+                      <p className="text-sm font-medium dark:text-foreground">{activity.message}</p>
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(activity.timestamp), 'MMM d, yyyy - h:mm a')}
                       </p>
@@ -263,7 +267,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              No recent activity
+              {t('No recent activity')}
             </p>
           )}
         </CardContent>

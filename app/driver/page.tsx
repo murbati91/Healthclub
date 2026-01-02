@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatusToggle } from '@/components/driver/StatusToggle';
@@ -14,7 +14,7 @@ interface Order {
   delivery_address: string;
   delivery_time_slot: string | null;
   status: string;
-  meal_details: any;
+  meal_details: unknown;
   customer_name?: string;
   customer_phone?: string;
   package_type?: string;
@@ -39,8 +39,7 @@ interface OrdersData {
 export default function DriverPage() {
   const [ordersData, setOrdersData] = useState<OrdersData | null>(null);
   const [driverStatus, setDriverStatus] = useState<boolean>(false);
-  const [driverId, setDriverId] = useState<string>('');
-  const [driverName, setDriverName] = useState<string>('Driver');
+  const [_driverId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('pending');
 
@@ -138,7 +137,7 @@ export default function DriverPage() {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Driver Status Toggle */}
         <StatusToggle
-          driverId={driverId}
+          driverId={_driverId}
           initialStatus={driverStatus}
           onStatusChange={setDriverStatus}
         />

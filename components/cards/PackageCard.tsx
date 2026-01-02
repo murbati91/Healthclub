@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +13,6 @@ interface PackageCardProps {
   name: string;
   description: string;
   features: string[];
-  imageUrl?: string;
   onSubscribe?: () => void;
 }
 
@@ -22,7 +20,6 @@ export function PackageCard({
   name,
   description,
   features,
-  imageUrl = "/placeholder-meal.jpg",
   onSubscribe,
 }: PackageCardProps) {
   return (
