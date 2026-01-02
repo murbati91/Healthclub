@@ -69,37 +69,26 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to flatten the structure
-    interface RawOrder {
-      id: string;
-      delivery_date: string;
-      delivery_time_slot: string;
-      delivery_address: string;
-      status: string;
-      meal_details: unknown;
-      notes: string | null;
-      subscription_id: string;
-      subscriptions?: {
-        profiles?: {
-          full_name?: string;
-          phone?: string;
-        } | null;
-        package_type?: string;
-      } | null;
-    }
+    const formattedOrders = (orders || []).map((order) => {
+      // Supabase returns joined tables as arrays
+      const subscription = Array.isArray(order.subscriptions) ? order.subscriptions[0] : order.subscriptions;
+      const profile = subscription?.profiles;
+      const profileData = Array.isArray(profile) ? profile[0] : profile;
 
-    const formattedOrders = (orders || []).map((order: RawOrder) => ({
-      id: order.id,
-      delivery_date: order.delivery_date,
-      delivery_time_slot: order.delivery_time_slot,
-      delivery_address: order.delivery_address,
-      status: order.status,
-      meal_details: order.meal_details,
-      notes: order.notes,
-      subscription_id: order.subscription_id,
-      customer_name: order.subscriptions?.profiles?.full_name || 'Unknown Customer',
-      customer_phone: order.subscriptions?.profiles?.phone || '',
-      package_type: order.subscriptions?.package_type || 'Normal',
-    }));
+      return {
+        id: order.id,
+        delivery_date: order.delivery_date,
+        delivery_time_slot: order.delivery_time_slot,
+        delivery_address: order.delivery_address,
+        status: order.status,
+        meal_details: order.meal_details,
+        notes: order.notes,
+        subscription_id: order.subscription_id,
+        customer_name: profileData?.full_name || 'Unknown Customer',
+        customer_phone: profileData?.phone || '',
+        package_type: subscription?.package_type || 'Normal',
+      };
+    });
 
     // Group orders by status
     const grouped = {
