@@ -131,11 +131,12 @@ export default function AdminPage() {
       const activities: RecentActivity[] = [];
 
       if (recentSubs) {
-        recentSubs.forEach((sub: { id: string; created_at: string; profiles?: { full_name?: string } | null }): void => {
+        recentSubs.forEach((sub): void => {
+          const profile = Array.isArray(sub.profiles) ? sub.profiles[0] : sub.profiles;
           activities.push({
             id: sub.id,
             type: 'subscription',
-            message: `New subscription from ${sub.profiles?.full_name || 'Customer'}`,
+            message: `New subscription from ${profile?.full_name || 'Customer'}`,
             timestamp: sub.created_at,
           });
         });
